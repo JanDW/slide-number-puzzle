@@ -30,12 +30,14 @@
 
       main {
         margin: 5vmin auto;
-        width: fit-content;
+        width: 80vmin;
+        height: 80vmin;
       }
 
       .grid {
         display: grid;
         grid-template-columns: repeat(var(--grid-size), 1fr);
+        grid-auto-rows: 1fr;
       }
 
       .frame {
@@ -56,8 +58,6 @@
         -webkit-appearance: none;
         -moz-appearance: none;
         margin: 0;
-        width: 21vmin;
-        height: 21vmin;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -87,8 +87,6 @@
       }
 
       .tile--empty {
-        width: calc(20vmin + var(--border-thickness) * 2);
-        height: calc(20vmin + var(--border-thickness) * 2);
         background-color: var(--frame-color) !important;
         box-shadow: inset 0 0 20px 4px var(--frame-shadow);
       }
