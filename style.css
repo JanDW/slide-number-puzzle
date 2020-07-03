@@ -1,92 +1,93 @@
- :root {
-        --frame-color: hsl(220, 60%, 40%);
-        --frame-highlight: hsl(220, 50%, 60%);
-        --frame-shadow: hsl(220, 50%, 20%);
-        --tile--1-color: hsl(0, 100%, 50%);
-        --tile--1-highlight: hsl(0, 100%, 70%);
-        --tile--1-shadow: hsl(0, 100%, 30%);
-        --tile--2-color: hsl(45, 100%, 50%);
-        --tile--2-highlight: hsl(45, 100%, 70%);
-        --tile--2-shadow: hsl(45, 100%, 30%);
-        --border-thickness: 3px;
-        --grid-size: 4;
-      }
+:root {
+  --frame-color: hsl(220, 60%, 40%);
+  --frame-highlight: hsl(220, 50%, 60%);
+  --frame-shadow: hsl(220, 50%, 20%);
+  --tile--1-color: hsl(0, 100%, 50%);
+  --tile--1-highlight: hsl(0, 100%, 70%);
+  --tile--1-shadow: hsl(0, 100%, 30%);
+  --tile--2-color: hsl(45, 100%, 50%);
+  --tile--2-highlight: hsl(45, 100%, 70%);
+  --tile--2-shadow: hsl(45, 100%, 30%);
+  --border-thickness: 3px;
+  --grid-size: 4;
+}
 
-      html {
-        height: 100%;
-        overflow: hidden;
-      }
+html {
+  height: 100%;
+  overflow: hidden;
+}
 
-      body {
-        background: hsl(220, 20%, 91%);
-        background: linear-gradient(
-          45deg,
-          hsl(220, 20%, 91%) 0%,
-          hsl(220, 20%, 61%) 100%
-        );
-        color: hsl(0, 0%, 1%);
-        font-family: american typewriter, sans serif;
-      }
+body {
+  background: hsl(220, 20%, 91%);
+  background: linear-gradient(
+    45deg,
+    hsl(220, 20%, 91%) 0%,
+    hsl(220, 20%, 61%) 100%
+  );
+  color: hsl(0, 0%, 1%);
+  font-family: american typewriter, sans serif;
+  font-size: calc(1rem + 8vmin);
+}
 
-      main {
-        margin: 5vmin auto;
-        width: 80vmin;
-        height: 80vmin;
-      }
+main {
+  margin: 5vmin auto;
+  width: 80vmin;
+  height: 80vmin;
+}
 
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(var(--grid-size), 1fr);
-        grid-auto-rows: 1fr;
-      }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-size), 1fr);
+  grid-auto-rows: 1fr;
+}
 
-      .frame {
-        padding: 4vmin;
-        background-color: var(--frame-color);
-        border-radius: 1rem;
-        border: 4px solid;
-        border-top-color: var(--frame-highlight);
-        border-right-color: var(--frame-shadow);
-        border-bottom-color: var(--frame-shadow);
-        border-left-color: var(--frame-highlight);
-        box-shadow: 20px 20px 15px 5px hsla(0, 0%, 0%, 0.1);
-        font-size: 12vmin;
-        font-weight: 700;
-      }
+.frame {
+  padding: 4vmin;
+  background-color: var(--frame-color);
+  border-radius: 1rem;
+  border: 4px solid;
+  border-top-color: var(--frame-highlight);
+  border-right-color: var(--frame-shadow);
+  border-bottom-color: var(--frame-shadow);
+  border-left-color: var(--frame-highlight);
+  box-shadow: 20px 20px 15px 5px hsla(0, 0%, 0%, 0.1);
+  font-weight: 700;
+}
 
-      button {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        letter-spacing: -4px;
-        text-indent: -4px;
-        font-size: inherit;
-        font-weight: inherit;
-        border: 0;
-      }
+button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: -4px;
+  text-indent: -4px;
+  font-size: inherit;
+  font-weight: inherit;
+  border: 0;
+}
 
-      .tile--1 {
-        background-color: var(--tile--1-color);
-        border: var(--border-thickness) solid;
-        border-top-color: var(--tile--1-highlight);
-        border-right-color: var(--tile--1-shadow);
-        border-bottom-color: var(--tile--1-shadow);
-        border-left-color: var(--tile--1-highlight);
-      }
+.tile--1 {
+  background-color: var(--tile--1-color);
+  border: var(--border-thickness) solid;
+  border-top-color: var(--tile--1-highlight);
+  border-right-color: var(--tile--1-shadow);
+  border-bottom-color: var(--tile--1-shadow);
+  border-left-color: var(--tile--1-highlight);
+}
 
-      button:not(.tile--1):not(.tile--empty) {
-        background-color: var(--tile--2-color);
-        border: var(--border-thickness) solid;
-        border-top-color: var(--tile--2-highlight);
-        border-right-color: var(--tile--2-shadow);
-        border-bottom-color: var(--tile--2-shadow);
-        border-left-color: var(--tile--2-highlight);
-      }
+button:not(.tile--1):not(.tile--empty) {
+  background-color: var(--tile--2-color);
+  border: var(--border-thickness) solid;
+  border-top-color: var(--tile--2-highlight);
+  border-right-color: var(--tile--2-shadow);
+  border-bottom-color: var(--tile--2-shadow);
+  border-left-color: var(--tile--2-highlight);
+}
 
-      .tile--empty {
-        background-color: var(--frame-color) !important;
-        box-shadow: inset 0 0 20px 4px var(--frame-shadow);
-      }
+.tile--empty {
+  background-color: var(--frame-color) !important;
+  box-shadow: inset 0 0 20px 4px var(--frame-shadow);
+}
