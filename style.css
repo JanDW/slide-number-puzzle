@@ -14,9 +14,9 @@
 
 html {
   height: 100%;
-  overflow: hidden;
+  width: 100%;
   position: fixed; /* disable rubberbanding on scroll */
-  width: 100%
+  overflow: hidden;
 }
 
 body {
@@ -32,9 +32,11 @@ body {
 }
 
 main {
-  margin: 5vmin auto;
+  margin: 0 auto;
   width: 80vmin;
   height: 80vmin;
+  margin-top: calc( (100vh - 88vmin)/2 );
+  /* @TODO 80vmin + 2*4vmin from padding, should calc with css properties */
 }
 
 .grid {
@@ -44,6 +46,7 @@ main {
 }
 
 .frame {
+  box-sizing: border-box;
   padding: 4vmin;
   background-color: var(--frame-color);
   border-radius: 1rem;
