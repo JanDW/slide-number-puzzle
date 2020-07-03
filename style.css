@@ -29,6 +29,7 @@ body {
   color: hsl(0, 0%, 1%);
   font-family: american typewriter, sans serif;
   font-size: calc(1rem + 8vmin);
+  touch-action: none; /* disable zoom on touch devices */
 }
 
 main {
