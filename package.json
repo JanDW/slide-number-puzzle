@@ -1,0 +1,23 @@
+{
+  "name": "slide-number-puzzle",
+  "version": "1.0.0",
+  "description": "",
+  "main": "board.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JanDW/slide-number-puzzle.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JanDW/slide-number-puzzle/issues"
+  },
+  "homepage": "https://github.com/JanDW/slide-number-puzzle#readme",
+  "dependencies": {
+    "animate-css-grid": "^1.4.3"
+  }
+}
