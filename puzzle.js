@@ -12,15 +12,15 @@ let puzzle = [
 const rows = puzzle.length;
 const columns = puzzle[0].length;
 
-let emptyIndexes = findIndexes(0);
-let currentNumber = 1;
-let currentIndexes = findIndexes(currentNumber);
+let emptyTileIndexes = findTile(0);
+let currentTileNumber = 1;
+let currentTileLocation = findTile(currentTileNumber);
 
 /**
  * @param {number} puzzleNumber
  */
 
-function findIndexes(puzzleNumber) {
+function findTile(puzzleNumber) {
   for (let row = 0; row <= rows; row++) {
     for (let column = 0; column <= columns; column++) {
       if (puzzle[row][column] == puzzleNumber) {
@@ -28,4 +28,13 @@ function findIndexes(puzzleNumber) {
       }
     }
   }
+}
+
+function findAdjacentTiles(row,column) {
+
+}
+
+/* array of row,column arrays */
+function findEmptyTile(adjacentTiles) {
+
 }
