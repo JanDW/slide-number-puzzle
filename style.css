@@ -36,14 +36,31 @@ main {
   margin: 0 auto;
   width: 80vmin;
   height: 80vmin;
-  margin-top: calc( (100vh - 88vmin)/2 );
+  margin-top: calc((100vh - 88vmin) / 2);
   /* @TODO 80vmin + 2*4vmin from padding, should calc with css properties */
+}
+
+.heading {
+  font-size: 5vmin;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  background: white;
+  margin-top: -9vmin;
+  width: 100%;
+  padding: 2vmin;
+  display: none;
 }
 
 .grid {
   display: grid;
+  grid-template-areas:
+    "A B C D"
+    "E F G H"
+    "I J K L"
+    "M N O P";
   grid-template-columns: repeat(var(--grid-size), 1fr);
-  grid-auto-rows: 1fr;
 }
 
 .frame {
@@ -60,9 +77,10 @@ main {
   font-weight: 700;
 }
 
-button {
+.tile {
   -webkit-appearance: none;
   -moz-appearance: none;
+  grid-area: var(--area, auto);
   margin: 0;
   padding: 0;
   display: flex;
@@ -73,9 +91,33 @@ button {
   font-size: inherit;
   font-weight: inherit;
   border: 0;
+  z-index: 1;
+  cursor: pointer;
 }
 
-.tile--1 {
+.tile--empty {
+  cursor: auto;
+}
+
+.tile[disabled] {
+  cursor: not-allowed;
+  color: inherit;
+}
+
+.tile-background {
+  background-color: var(--frame-color) !important;
+  box-shadow: inset 0 0 20px 4px var(--frame-shadow);
+  z-index: 0;
+  grid-area: var(--area, auto);
+}
+
+.tile--1,
+.tile--3,
+.tile--6,
+.tile--8,
+.tile--9,
+.tile--11,
+.tile--14 {
   background-color: var(--tile--1-color);
   border: var(--border-thickness) solid;
   border-top-color: var(--tile--1-highlight);
@@ -84,7 +126,14 @@ button {
   border-left-color: var(--tile--1-highlight);
 }
 
-button:not(.tile--1):not(.tile--empty) {
+.tile--2,
+.tile--4,
+.tile--5,
+.tile--7,
+.tile--10,
+.tile--12,
+.tile--13,
+.tile--15 {
   background-color: var(--tile--2-color);
   border: var(--border-thickness) solid;
   border-top-color: var(--tile--2-highlight);
@@ -93,7 +142,12 @@ button:not(.tile--1):not(.tile--empty) {
   border-left-color: var(--tile--2-highlight);
 }
 
-.tile--empty {
-  background-color: var(--frame-color) !important;
-  box-shadow: inset 0 0 20px 4px var(--frame-shadow);
+@keyframes popIn {
+  from {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transform: scale(0.6);
+    transition: opacity, scale, 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
 }
