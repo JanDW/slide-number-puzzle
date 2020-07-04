@@ -2,6 +2,7 @@
   --frame-color: hsl(220, 60%, 40%);
   --frame-highlight: hsl(220, 50%, 60%);
   --frame-shadow: hsl(220, 50%, 20%);
+  --new-game: var(--frame-shadow);
   --tile--1-color: hsl(0, 100%, 50%);
   --tile--1-highlight: hsl(0, 100%, 70%);
   --tile--1-shadow: hsl(0, 100%, 30%);
@@ -140,6 +141,17 @@ main {
   border-right-color: var(--tile--2-shadow);
   border-bottom-color: var(--tile--2-shadow);
   border-left-color: var(--tile--2-highlight);
+}
+
+.newGame {
+  color: var(--new-game);
+  font-size: 2rem;
+  background: none;
+  border: none;
+  text-decoration: underline;
+  display: block;
+  margin: 0 auto;
+  margin-top: 5vmin;
 }
 
 @keyframes popIn {
