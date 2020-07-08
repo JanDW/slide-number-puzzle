@@ -4,7 +4,7 @@
   "description": "",
   "main": "puzzle.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "deploy": "rsync -zavilr --delete --exclude '.DS_Store' ./ jandewil@jandewilde.org:/home4/jandewil/public_html/jandewilde/slide-number-puzzle"
   },
   "repository": {
     "type": "git",
