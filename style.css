@@ -13,6 +13,12 @@
   --grid-size: 4;
 }
 
+@font-face {
+  font-family: 'LibreClarendonWide-Medium';
+  src: url("LibreClarendonWide-120Medium.otf") format("opentype");
+  font-weight: 500;
+}
+
 html {
   height: 100%;
   width: 100%;
@@ -28,8 +34,8 @@ body {
     hsl(220, 20%, 61%) 100%
   );
   color: hsl(0, 0%, 1%);
-  font-family: american typewriter, sans serif;
-  font-size: calc(1rem + 8vmin);
+  font-family: LibreClarendonWide-Medium, american typewriter, serif;
+  font-size: calc(1rem + 10vmin);
   touch-action: none; /* disable zoom on touch devices */
 }
 
@@ -75,7 +81,7 @@ main {
   border-bottom-color: var(--frame-shadow);
   border-left-color: var(--frame-highlight);
   box-shadow: 20px 20px 15px 5px hsla(0, 0%, 0%, 0.1);
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .tile {
@@ -84,8 +90,8 @@ main {
   grid-area: var(--area, auto);
   margin: 0;
   padding: 0;
-  letter-spacing: -4px;
-  text-indent: -4px;
+  letter-spacing: -2px;
+  text-indent: -2px;
   font-size: inherit;
   font-weight: inherit;
   border: 0;
