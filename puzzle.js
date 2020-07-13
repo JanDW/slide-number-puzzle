@@ -1,20 +1,26 @@
 // @ts-check
 'use strict';
 
-// Init animateCSSGrid dependency
+// animateCSSGrid dependency
 const grid = document.querySelector('.grid');
-const { forceGridAnimation } = animateCSSGrid.wrapGrid(grid);
+//const { forceGridAnimation } = animateCSSGrid.wrapGrid(grid);
 
+
+// puzzle tile
 const tiles = Array.from(document.querySelectorAll('.tile'));
 const emptyTile = document.querySelector('.tile--empty');
 
-const heading = document.querySelector('.heading');
+const gridSize = Math.sqrt(tiles.length);
+const isGridSizeEven = (gridWidth) => gridWidth % 2 == 0;
 
 // Get congratulations heading
-const newGame = document.querySelector(".newGame");
-newGame.addEventListener("click", event => location.reload());
+const heading = document.querySelector('.heading');
 
+// Get new game button
+const newGame = document.querySelector('.newGame');
+newGame.addEventListener('click', (event) => location.reload());
 
+// Map of which tiles can move for each area
 const areaKeys = {
   A: ['B', 'E'],
   B: ['A', 'C', 'F'],
@@ -37,23 +43,19 @@ const areaKeys = {
 // Add click listener to all tiles
 tiles.map((tile) => {
   tile.addEventListener('click', (event) => {
-    // Grab the grid area set on the clicked tile and empty tile
     const tileArea = tile.style.getPropertyValue('--area');
-    const emptyTileArea = emptyTile.style.getPropertyValue('--area');
+    const emptyArea = emptyTile.style.getPropertyValue('--area');
 
-    // Swap the empty tile with the clicked tile
+    // Swap tiles
     emptyTile.style.setProperty('--area', tileArea);
-    tile.style.setProperty('--area', emptyTileArea);
+    tile.style.setProperty('--area', emptyArea);
 
-    // Animate the tiles
     forceGridAnimation();
-
-    // Unlock and lock tiles
-    unlockTiles(tileArea);
+    unlockAreas(tileArea);
   });
 });
 
-const unlockTiles = (currentTileArea) => {
+const unlockAreas = (currentTileArea) => {
   // Cycle through all the tiles and check which should be disabled and enabled
   tiles.map((tile) => {
     const tileArea = tile.style.getPropertyValue('--area');
@@ -67,11 +69,11 @@ const unlockTiles = (currentTileArea) => {
     }
   });
 
-  // Check if the tiles are in the right order
-  isComplete(tiles);
+  // Do we hava a winner?
+  checkPuzzleSolved(tiles);
 };
 
-const isComplete = (tiles) => {
+const checkPuzzleSolved = (tiles) => {
   // Get all the current tile area values
   const currentTilesString = tiles
     .map((tile) => tile.style.getPropertyValue('--area').trim())
@@ -85,7 +87,7 @@ const isComplete = (tiles) => {
 };
 
 // Inversion calculator
-const inversionCount = (array) => {
+const countInversions = (array) => {
   // Using the reduce function to run through all items in the array
   // Each item in the array is checked against everything before it
   // This will return a new array with each intance of an item appearing before it's original predecessor
@@ -102,31 +104,84 @@ const inversionCount = (array) => {
   }, []).length;
 };
 
+// Finds the empty tile and returns the area in its style attribute
+const getEmptyArea = (tiles) => {
+  const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+  let emptyArea;
+  tiles.forEach((tile, index) => {
+    if (tile.classList.contains('tile--empty')) {
+      emptyArea = alphabet.indexOf(
+        tile.style.getPropertyValue('--area').toLowerCase()
+      );
+    }
+  });
+  return emptyArea;
+};
+
+let emptyArea = getEmptyArea(tiles);
+
+const getAreaRow = (tileArea, gridSize) => {
+  return Math.ceil(tileArea++ / gridSize);
+};
+
 // Randomise tiles
-const shuffledKeys = (keys) =>
+const shuffleKeys = (keys) =>
   Object.keys(keys).sort(() => 0.5 - Math.random());
+
 
 setTimeout(() => {
   // Begin with our in order area keys
-  let startingAreas = Object.keys(areaKeys);
+  let toshuffleKeys = Object.keys(areaKeys); //?
+  let shuffledAreas = shuffleKeys(areaKeys); //? 
+  let testing = shuffleKeys([0,1, 2, 3, 4, 5, 6, 7]); //?
+  let countedInversions = countInversions(testing); //?
+  
 
   // Use the inversion function to check if the keys will be solveable or not shuffled
   // Shuffle the keys until they are solvable
-  while (
-    inversionCount(startingAreas) % 2 == 1 ||
-    inversionCount(startingAreas) == 0
-  ) {
-    startingAreas = shuffledKeys(areaKeys);
+
+  // odd grid means solvable puzzle has even number of inversions
+
+
+  if (countInversions(shuffledAreas) == 0) {
+
+  }
+
+
+  if (gridSize % 2 == 1) {
+    while (
+      countInversions(shuffledAreas) % 2 == 1
+    ) {
+      shuffledAreas = shuffleKeys(areaKeys);
+      emptyAreaRow = getAreaRow(emptyArea, gridSize);
+
+    }
+  }
+  // even grid width means we have to check where empty tile is. Even row counting from bottom requires odd number of inversions.
+  else if ((gridSize - emptyAreaRow) % 2) {
+    while (
+      countInversions(shuffledAreas) % 2 == 0 || countInversions(shuffledAreas) == 0
+    ){
+       shuffledAreas = shuffleKeys(areaKeys);
+     }
+  } else {
+     while (
+       countInversions(shuffledAreas) % 2 == 1 ||
+       countInversions(shuffledAreas) == 0
+     ) {
+       shuffledAreas = shuffleKeys(areaKeys);
+     }
   }
 
   // Apply shuffled areas
   tiles.map((tile, index) => {
-    tile.style.setProperty('--area', startingAreas[index]);
+    tile.style.setProperty('--area', shuffledAreas[index]);
   });
+  
 
   // Initial shuffle animation
   forceGridAnimation();
 
   // Unlock and lock tiles
-  unlockTiles(emptyTile.style.getPropertyValue('--area'));
+  unlockAreas(emptyTile.style.getPropertyValue('--area'));
 }, 2000);
