@@ -6,10 +6,14 @@
 
   let gridSize = 4;
 
-  gridSizeRange.addEventListener('mouseup', () => {
+  const getGridSize = () => {
     gridSize = parseInt(gridSizeRange.value);
     main();
-  });
+  }
+
+
+  gridSizeRange.addEventListener('mouseup', getGridSize, false);
+  gridSizeRange.addEventListener('touchend', getGridSize, false);
 
   //const gridSize = 10;
 
