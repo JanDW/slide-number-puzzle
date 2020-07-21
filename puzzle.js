@@ -252,7 +252,7 @@
       const emptyTileAreaKey = getAreaKey(emptyTileArea, gridSize);
 
       unlockTiles(tiles, emptyTileAreaKey, areaKeys, gridSize);
-    }, 2000);
+    }, 500);
   }
   main();
 })();
