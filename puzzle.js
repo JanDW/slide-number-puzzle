@@ -1,187 +1,258 @@
 // @ts-check
 'use strict';
 
-// animateCSSGrid dependency
-const grid = document.querySelector('.grid');
-//const { forceGridAnimation } = animateCSSGrid.wrapGrid(grid);
+(function () {
+  const gridSizeRange = document.querySelector('#gridSize');
 
+  let gridSize = 4;
 
-// puzzle tile
-const tiles = Array.from(document.querySelectorAll('.tile'));
-const emptyTile = document.querySelector('.tile--empty');
-
-const gridSize = Math.sqrt(tiles.length);
-const isGridSizeEven = (gridWidth) => gridWidth % 2 == 0;
-
-// Get congratulations heading
-const heading = document.querySelector('.heading');
-
-// Get new game button
-const newGame = document.querySelector('.newGame');
-newGame.addEventListener('click', (event) => location.reload());
-
-// Map of which tiles can move for each area
-const areaKeys = {
-  A: ['B', 'E'],
-  B: ['A', 'C', 'F'],
-  C: ['B', 'D', 'G'],
-  D: ['C', 'H'],
-  E: ['F', 'A', 'I'],
-  F: ['E', 'G', 'B', 'J'],
-  G: ['F', 'H', 'C', 'K'],
-  H: ['G', 'D', 'L'],
-  I: ['J', 'E', 'M'],
-  J: ['I', 'K', 'F', 'N'],
-  K: ['J', 'L', 'G', 'O'],
-  L: ['K', 'H', 'P'],
-  M: ['N', 'I'],
-  N: ['M', 'O', 'J'],
-  O: ['N', 'P', 'K'],
-  P: ['O', 'L'],
-};
-
-// Add click listener to all tiles
-tiles.map((tile) => {
-  tile.addEventListener('click', (event) => {
-    const tileArea = tile.style.getPropertyValue('--area');
-    const emptyArea = emptyTile.style.getPropertyValue('--area');
-
-    // Swap tiles
-    emptyTile.style.setProperty('--area', tileArea);
-    tile.style.setProperty('--area', emptyArea);
-
-    forceGridAnimation();
-    unlockAreas(tileArea);
-  });
-});
-
-const unlockAreas = (currentTileArea) => {
-  // Cycle through all the tiles and check which should be disabled and enabled
-  tiles.map((tile) => {
-    const tileArea = tile.style.getPropertyValue('--area');
-
-    // Check if that areaKey has the tiles area in it's values
-    // .trim() is needed because the animation lib formats the styles attribute
-    if (areaKeys[currentTileArea.trim()].includes(tileArea.trim())) {
-      tile.disabled = false;
-    } else {
-      tile.disabled = true;
-    }
-  });
-
-  // Do we hava a winner?
-  checkPuzzleSolved(tiles);
-};
-
-const checkPuzzleSolved = (tiles) => {
-  // Get all the current tile area values
-  const currentTilesString = tiles
-    .map((tile) => tile.style.getPropertyValue('--area').trim())
-    .toString();
-
-  // Compare the current tiles with the areaKeys keys
-  if (currentTilesString == Object.keys(areaKeys).toString()) {
-    heading.innerHTML = 'Nicely Done!';
-    heading.style = `display:block; animation: popIn .3s cubic-bezier(0.68, -0.55, 0.265, 1.55);`;
+  const getGridSize = () => {
+    gridSize = parseInt(gridSizeRange.value);
+    main();
   }
-};
 
-// Inversion calculator
-const countInversions = (array) => {
-  // Using the reduce function to run through all items in the array
-  // Each item in the array is checked against everything before it
-  // This will return a new array with each intance of an item appearing before it's original predecessor
-  return array.reduce((accumulator, current, index, array) => {
-    return array
-      .slice(index)
-      .filter((item) => {
-        return item < current;
-      })
-      .map((item) => {
-        return [current, item];
-      })
-      .concat(accumulator);
-  }, []).length;
-};
 
-// Finds the empty tile and returns the area in its style attribute
-const getEmptyArea = (tiles) => {
-  const alphabet = 'abcdefghijklmnopqrstuvwxyz';
-  let emptyArea;
-  tiles.forEach((tile, index) => {
-    if (tile.classList.contains('tile--empty')) {
-      emptyArea = alphabet.indexOf(
-        tile.style.getPropertyValue('--area').toLowerCase()
+  gridSizeRange.addEventListener('mouseup', getGridSize, false);
+  gridSizeRange.addEventListener('touchend', getGridSize, false);
+
+  //const gridSize = 10;
+
+  const grid = document.querySelector('.grid');
+  const heading = document.querySelector('.heading');
+  const newGame = document.querySelector('.newGame');
+
+  // Init animateCSSGrid dependency
+  const { forceGridAnimation } = animateCSSGrid.wrapGrid(grid);
+
+  const setRootProperty = (property, value) => {
+    const root = document.documentElement;
+    root.style.setProperty(property, value);
+  };
+
+  // Find out what row a tile is in
+  const getAreaRow = (tilePosition, gridSize) => {
+    return Math.ceil(tilePosition++ / gridSize);
+  };
+
+  // Find out what column a tile is in
+  const getAreaColumn = (tilePosition, areaRow, gridSize) => {
+    return tilePosition - (areaRow - 1) * gridSize;
+  };
+
+  // Fn to create an object where the key
+  const getAreaKeys = (gridSize) => {
+    const gridPositions = Math.pow(gridSize, 2);
+    const areaKeys = [];
+    for (let index = 1; index < gridPositions + 1; index++) {
+      const areaRow = getAreaRow(index, gridSize);
+      let leftPos, rightPos, topPos, bottomPos;
+      if (getAreaRow(index - 1, gridSize) === areaRow) {
+        leftPos = index - 1;
+      }
+
+      if (getAreaRow(index + 1, gridSize) === areaRow) {
+        rightPos = index + 1;
+      }
+
+      if (index - gridSize > 0) {
+        topPos = index - gridSize;
+      }
+
+      if (index + gridSize <= gridPositions) {
+        bottomPos = index + gridSize;
+      }
+
+      const values = [leftPos, rightPos, topPos, bottomPos].filter(Boolean);
+      areaKeys[index] = values;
+    }
+    return areaKeys;
+  };
+
+  const getAreaKey = (areaRowColumn, gridSize) => {
+    let [row, column] = areaRowColumn.trim().split('/').map(Number);
+    return --row * gridSize + column;
+  };
+
+  const getTileColor = (row, column) => {
+    if (
+      (row % 2 == 1 && column % 2 == 1) ||
+      (row % 2 == 0 && column % 2 == 0)
+    ) {
+      return 'tile--color1';
+    } else {
+      return 'tile--color2';
+    }
+  };
+
+  const generateGridInDOM = (grid, numberOfTiles, gridSize) => {
+    // Remove existing grid
+    while (grid.firstChild) {
+      grid.removeChild(grid.firstChild);
+    }
+    // insert tiles
+    for (let index = 1; index < numberOfTiles + 1; index++) {
+      let areaRow = getAreaRow(index, gridSize);
+      let areaColumn = getAreaColumn(index, areaRow, gridSize);
+      let tileColor = getTileColor(areaRow, areaColumn);
+      // @TODO DOM insertions are slow, build as string and then insert in DOM at end.
+      grid.insertAdjacentHTML(
+        'beforeend',
+        `<button class="tile tile--${index} ${tileColor}" disabled style="--area: ${areaRow}/${areaColumn};">${index}</button>
+    <div class="tile-background" style="--area: ${areaRow}/${areaColumn};"></div>`
       );
     }
-  });
-  return emptyArea;
-};
+    // insert empty tile as last sibling
+    grid.insertAdjacentHTML(
+      `beforeend`,
+      `<div class="tile tile--empty" style="--area: ${gridSize}/${gridSize};"></div>
+    <div class="tile-background" style="--area: ${gridSize}/${gridSize};"></div>`
+    );
+  };
 
-let emptyArea = getEmptyArea(tiles);
-
-const getAreaRow = (tileArea, gridSize) => {
-  return Math.ceil(tileArea++ / gridSize);
-};
-
-// Randomise tiles
-const shuffleKeys = (keys) =>
-  Object.keys(keys).sort(() => 0.5 - Math.random());
-
-
-setTimeout(() => {
-  // Begin with our in order area keys
-  let toshuffleKeys = Object.keys(areaKeys); //?
-  let shuffledAreas = shuffleKeys(areaKeys); //? 
-  let testing = shuffleKeys([0,1, 2, 3, 4, 5, 6, 7]); //?
-  let countedInversions = countInversions(testing); //?
-  
-
-  // Use the inversion function to check if the keys will be solveable or not shuffled
-  // Shuffle the keys until they are solvable
-
-  // odd grid means solvable puzzle has even number of inversions
-
-
-  if (countInversions(shuffledAreas) == 0) {
-
-  }
-
-
-  if (gridSize % 2 == 1) {
-    while (
-      countInversions(shuffledAreas) % 2 == 1
-    ) {
-      shuffledAreas = shuffleKeys(areaKeys);
-      emptyAreaRow = getAreaRow(emptyArea, gridSize);
-
+  const sizeTileFont = (gridSize) => {
+    //Size font to tileheight
+    let fontSize;
+    if (gridSize < 11) {
+      fontSize = (80 / gridSize) * 0.6;
+    } else {
+      fontSize = (80 / gridSize) * 0.4;
     }
+
+    setRootProperty('--font-size', `${fontSize}vmin`);
+  };
+
+  // Use event delegation: .grid and event.target
+  const attachTilesClickHandler = (tiles, emptyTile, areaKeys) => {
+    tiles.map((tile) => {
+      tile.addEventListener('click', (event) => {
+        // Grab the grid area set on the clicked tile and empty tile
+        const tileArea = tile.style.getPropertyValue('--area');
+        const emptyTileArea = emptyTile.style.getPropertyValue('--area');
+
+        // Swap the empty tile with the clicked tile
+        emptyTile.style.setProperty('--area', tileArea);
+        tile.style.setProperty('--area', emptyTileArea);
+
+        // Animate the tiles
+        forceGridAnimation();
+
+        const currentTileArea = getAreaKey(tileArea, gridSize);
+
+        // Unlock and lock tiles
+        unlockTiles(tiles, currentTileArea, areaKeys, gridSize);
+      });
+    });
+  };
+
+  const unlockTiles = (tiles, currentTileArea, areaKeys, gridSize) => {
+    // Cycle through all the tiles and check which should be disabled and enabled
+
+    tiles.map((tile) => {
+      const tileArea = tile.style.getPropertyValue('--area');
+
+      // Check if that areaKey has the tiles area in it's values
+      // .trim() is needed because the animation lib formats the styles attribute
+
+      const areaKey = getAreaKey(tileArea, gridSize);
+
+      if (areaKeys[currentTileArea].includes(areaKey)) {
+        tile.disabled = false;
+      } else {
+        tile.disabled = true;
+      }
+    });
+
+    // Check if the tiles are in the right order
+    isComplete(tiles, areaKeys);
+  };
+
+  const isComplete = (tiles, areaKeys) => {
+    // Get all the current tile area values
+    const currentTilesString = tiles
+      .map((tile) => tile.style.getPropertyValue('--area').trim())
+      .toString();
+
+    // Compare the current tiles with the areaKeys keys
+    if (currentTilesString == Object.keys(areaKeys).toString()) {
+      heading.innerHTML = 'Nicely Done!';
+      heading.style = `display:block; animation: popIn .3s cubic-bezier(0.68, -0.55, 0.265, 1.55);`;
+    }
+  };
+
+  // Inversion calculator
+  const inversionCount = (array) => {
+    // Using the reduce function to run through all items in the array
+    // Each item in the array is checked against everything before it
+    // This will return a new array with each intance of an item appearing before it's original predecessor
+    return array.reduce((accumulator, current, index, array) => {
+      return array
+        .slice(index)
+        .filter((item) => {
+          return item < current;
+        })
+        .map((item) => {
+          return [current, item];
+        })
+        .concat(accumulator);
+    }, []).length;
+  };
+
+  // Randomise tiles
+  const shuffledKeys = (keys) => {
+    return Object.keys(keys)
+      .map(Number)
+      .sort(() => 0.5 - Math.random());
+  };
+
+  // Main
+  function main() {
+    const numberOfTiles = Math.pow(gridSize, 2) - 1; //?
+
+    //@TODO — just reset game instead of reloading
+    newGame.addEventListener('click', (event) => location.reload());
+    setRootProperty('--grid-size', gridSize);
+
+    generateGridInDOM(grid, numberOfTiles, gridSize);
+
+    const tiles = Array.from(document.querySelectorAll('.tile'));
+    const emptyTile = document.querySelector('.tile--empty');
+
+    //@TODO size in relative units or recalculate, so it updates on viewport resize
+    sizeTileFont(gridSize);
+
+    const areaKeys = getAreaKeys(gridSize);
+
+    attachTilesClickHandler(tiles, emptyTile, areaKeys);
+
+    setTimeout(() => {
+      // Begin with our in order area keys
+      let startingAreas = Object.keys(areaKeys).map(Number);
+
+      // Use the inversion function to check if the keys will be solveable or not shuffled
+      // Shuffle the keys until they are solvable
+      while (
+        inversionCount(startingAreas) % 2 == 1 ||
+        inversionCount(startingAreas) == 0
+      ) {
+        startingAreas = shuffledKeys(areaKeys); //?
+      }
+
+      // Apply shuffled areas
+      tiles.map((tile, index) => {
+        let areaRow = getAreaRow(startingAreas[index], gridSize);
+        let areaColumn = getAreaColumn(startingAreas[index], areaRow, gridSize);
+        tile.style.setProperty('--area', `${areaRow}/${areaColumn}`);
+      });
+
+      // Initial shuffle animation
+      forceGridAnimation();
+
+      // Unlock and lock tiles
+      const emptyTileArea = emptyTile.style.getPropertyValue('--area');
+      const emptyTileAreaKey = getAreaKey(emptyTileArea, gridSize);
+
+      unlockTiles(tiles, emptyTileAreaKey, areaKeys, gridSize);
+    }, 500);
   }
-  // even grid width means we have to check where empty tile is. Even row counting from bottom requires odd number of inversions.
-  else if ((gridSize - emptyAreaRow) % 2) {
-    while (
-      countInversions(shuffledAreas) % 2 == 0 || countInversions(shuffledAreas) == 0
-    ){
-       shuffledAreas = shuffleKeys(areaKeys);
-     }
-  } else {
-     while (
-       countInversions(shuffledAreas) % 2 == 1 ||
-       countInversions(shuffledAreas) == 0
-     ) {
-       shuffledAreas = shuffleKeys(areaKeys);
-     }
-  }
-
-  // Apply shuffled areas
-  tiles.map((tile, index) => {
-    tile.style.setProperty('--area', shuffledAreas[index]);
-  });
-  
-
-  // Initial shuffle animation
-  forceGridAnimation();
-
-  // Unlock and lock tiles
-  unlockAreas(emptyTile.style.getPropertyValue('--area'));
-}, 2000);
+  main();
+})();
