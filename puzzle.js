@@ -36,6 +36,14 @@
     root.style.setProperty(property, value);
   };
 
+  const isEven = (number) => {
+    return number % 2 === 0;
+  };
+
+  const isOdd = (number) => {
+    return !isEven(number);
+  };
+
   // Find out what row a tile is in
   const getAreaRow = (tilePosition, gridSize) => {
     return Math.ceil(tilePosition++ / gridSize);
@@ -86,15 +94,15 @@
   // Fn returns CSS class to set background color for tile
   const getTileColor = (row, column) => {
     if (
-      (row % 2 == 1 && column % 2 == 1) ||
-      (row % 2 == 0 && column % 2 == 0)
+      (isOdd(row) && isOdd(column)) ||
+      (isEven(row) && isEven(column))
     ) {
       return 'tile--color1';
     } else {
       return 'tile--color2';
     }
   };
-  
+
   // Remove existing puzzle, Generate new puzzle, insert in DOM
   const generateGridInDOM = (grid, numberOfTiles, gridSize) => {
     let gridHTML = '';
