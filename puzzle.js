@@ -2,28 +2,35 @@
 'use strict';
 
 (function () {
+  // Range HTML input element to set gridSize
   const gridSizeRange = document.querySelector('#gridSize');
 
+  // Only variable that needs to get set, everything else gets derived
   let gridSize = 4;
 
+  // Fn for event listeners callback on the range HTML input
   const getGridSize = () => {
     gridSize = parseInt(gridSizeRange.value);
     main();
-  }
+  };
 
-
+  // Event listeners for range HTML input to change gridSize
   gridSizeRange.addEventListener('mouseup', getGridSize, false);
   gridSizeRange.addEventListener('touchend', getGridSize, false);
 
-  //const gridSize = 10;
-
+  // Container for puzzle
   const grid = document.querySelector('.grid');
+
+  // Message container for announcing that puzzle has been solved
   const heading = document.querySelector('.heading');
+
+  // Affordance to start new game
   const newGame = document.querySelector('.newGame');
 
   // Init animateCSSGrid dependency
   const { forceGridAnimation } = animateCSSGrid.wrapGrid(grid);
 
+  // Define a CSS custom property on the :root element
   const setRootProperty = (property, value) => {
     const root = document.documentElement;
     root.style.setProperty(property, value);
@@ -39,7 +46,7 @@
     return tilePosition - (areaRow - 1) * gridSize;
   };
 
-  // Fn to create an object where the key
+  // Fn to generate map of valid moves for each empty tile position
   const getAreaKeys = (gridSize) => {
     const gridPositions = Math.pow(gridSize, 2);
     const areaKeys = [];
@@ -68,11 +75,15 @@
     return areaKeys;
   };
 
+  // Fn to convert 'row/column' grid-area notation 
+  //to a single number in a linear sequence
+  // e.g. on a 5×5 grid '3/2' returns 12
   const getAreaKey = (areaRowColumn, gridSize) => {
     let [row, column] = areaRowColumn.trim().split('/').map(Number);
     return --row * gridSize + column;
   };
 
+  // Fn returns CSS class to set background color for tile
   const getTileColor = (row, column) => {
     if (
       (row % 2 == 1 && column % 2 == 1) ||
@@ -83,45 +94,42 @@
       return 'tile--color2';
     }
   };
-
+  
+  // Remove existing puzzle, Generate new puzzle, insert in DOM
   const generateGridInDOM = (grid, numberOfTiles, gridSize) => {
+    let gridHTML = '';
     // Remove existing grid
     while (grid.firstChild) {
       grid.removeChild(grid.firstChild);
     }
-    // insert tiles
+    // create tiles HTML
     for (let index = 1; index < numberOfTiles + 1; index++) {
       let areaRow = getAreaRow(index, gridSize);
       let areaColumn = getAreaColumn(index, areaRow, gridSize);
       let tileColor = getTileColor(areaRow, areaColumn);
-      // @TODO DOM insertions are slow, build as string and then insert in DOM at end.
-      grid.insertAdjacentHTML(
-        'beforeend',
-        `<button class="tile tile--${index} ${tileColor}" disabled style="--area: ${areaRow}/${areaColumn};">${index}</button>
-    <div class="tile-background" style="--area: ${areaRow}/${areaColumn};"></div>`
-      );
+      gridHTML += `<button class="tile tile--${index} ${tileColor}" disabled style="--area: ${areaRow}/${areaColumn};">${index}</button>
+    <div class="tile-background" style="--area: ${areaRow}/${areaColumn};"></div>`;
     }
-    // insert empty tile as last sibling
-    grid.insertAdjacentHTML(
-      `beforeend`,
-      `<div class="tile tile--empty" style="--area: ${gridSize}/${gridSize};"></div>
-    <div class="tile-background" style="--area: ${gridSize}/${gridSize};"></div>`
-    );
+    // Finally, add empty tile HTML
+    gridHTML += `<div class="tile tile--empty" style="--area: ${gridSize}/${gridSize};"></div>
+    <div class="tile-background" style="--area: ${gridSize}/${gridSize};"></div>`;
+
+    // Insert in DOM
+    grid.insertAdjacentHTML('beforeend', gridHTML);
   };
 
+  // Fn to calculate tile font-size
   const sizeTileFont = (gridSize) => {
-    //Size font to tileheight
     let fontSize;
     if (gridSize < 11) {
       fontSize = (80 / gridSize) * 0.6;
     } else {
       fontSize = (80 / gridSize) * 0.4;
     }
-
     setRootProperty('--font-size', `${fontSize}vmin`);
   };
 
-  // Use event delegation: .grid and event.target
+  // @TODO Use event delegation: .grid and event.target
   const attachTilesClickHandler = (tiles, emptyTile, areaKeys) => {
     tiles.map((tile) => {
       tile.addEventListener('click', (event) => {
