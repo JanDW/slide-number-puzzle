@@ -10,8 +10,15 @@
   --tile--2-highlight: hsl(45, 100%, 70%);
   --tile--2-shadow: hsl(45, 100%, 30%);
   --border-thickness: 3px;
+  /* --font-size: calc(1rem + (10vmin / (var(--grid-size) * 0.5))); */
   --grid-size: 4;
 }
+
+/* @media screen and (min-width: 800px) {
+  :root {
+    --font-size: calc(1rem + 10vmin);
+  }
+} */
 
 @font-face {
   font-family: 'LibreClarendonWide-Medium';
@@ -35,15 +42,21 @@ body {
   );
   color: hsl(0, 0%, 1%);
   font-family: LibreClarendonWide-Medium, american typewriter, serif;
-  font-size: calc(1rem + 10vmin);
+  font-size: var(--font-size);
   touch-action: none; /* disable zoom on touch devices */
+}
+
+.grid-size {
+  display:flex;
+  justify-content: center;
+  margin: 2vmin 0;
 }
 
 main {
   margin: 0 auto;
   width: 80vmin;
   height: 80vmin;
-  margin-top: calc((100vh - 88vmin) / 2);
+  /*margin-top: calc((100vh - 88vmin) / 2);*/
   /* @TODO 80vmin + 2*4vmin from padding, should calc with css properties */
 }
 
@@ -62,11 +75,6 @@ main {
 
 .grid {
   display: grid;
-  grid-template-areas:
-    "A B C D"
-    "E F G H"
-    "I J K L"
-    "M N O P";
   grid-template-columns: repeat(var(--grid-size), 1fr);
 }
 
@@ -87,7 +95,7 @@ main {
 .tile {
   -webkit-appearance: none;
   -moz-appearance: none;
-  grid-area: var(--area, auto);
+  grid-area: var(--area);
   margin: 0;
   padding: 0;
   letter-spacing: -2px;
@@ -115,13 +123,7 @@ main {
   grid-area: var(--area, auto);
 }
 
-.tile--1,
-.tile--3,
-.tile--6,
-.tile--8,
-.tile--9,
-.tile--11,
-.tile--14 {
+.tile--color1 {
   background-color: var(--tile--1-color);
   border: var(--border-thickness) solid;
   border-top-color: var(--tile--1-highlight);
@@ -130,14 +132,7 @@ main {
   border-left-color: var(--tile--1-highlight);
 }
 
-.tile--2,
-.tile--4,
-.tile--5,
-.tile--7,
-.tile--10,
-.tile--12,
-.tile--13,
-.tile--15 {
+.tile--color2 {
   background-color: var(--tile--2-color);
   border: var(--border-thickness) solid;
   border-top-color: var(--tile--2-highlight);
