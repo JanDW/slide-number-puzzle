@@ -10,15 +10,8 @@
   --tile--2-highlight: hsl(45, 100%, 70%);
   --tile--2-shadow: hsl(45, 100%, 30%);
   --border-thickness: 3px;
-  /* --font-size: calc(1rem + (10vmin / (var(--grid-size) * 0.5))); */
   --grid-size: 4;
 }
-
-/* @media screen and (min-width: 800px) {
-  :root {
-    --font-size: calc(1rem + 10vmin);
-  }
-} */
 
 @font-face {
   font-family: 'LibreClarendonWide-Medium';
@@ -56,8 +49,6 @@ main {
   margin: 0 auto;
   width: 80vmin;
   height: 80vmin;
-  /*margin-top: calc((100vh - 88vmin) / 2);*/
-  /* @TODO 80vmin + 2*4vmin from padding, should calc with css properties */
 }
 
 .heading {
