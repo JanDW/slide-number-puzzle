@@ -1,6 +1,8 @@
 // @ts-check
 'use strict';
 
+//@TODO change vocab to positions, tiles, empty tile.
+
 (function () {
   // Range HTML input element to set gridSize
   const gridSizeRange = document.querySelector('#gridSize');
@@ -83,7 +85,7 @@
     return areaKeys;
   };
 
-  // Fn to convert 'row/column' grid-area notation 
+  // Fn to convert 'row/column' grid-area notation
   //to a single number in a linear sequence
   // e.g. on a 5×5 grid '3/2' returns 12
   const getAreaKey = (areaRowColumn, gridSize) => {
@@ -93,10 +95,7 @@
 
   // Fn returns CSS class to set background color for tile
   const getTileColor = (row, column) => {
-    if (
-      (isOdd(row) && isOdd(column)) ||
-      (isEven(row) && isEven(column))
-    ) {
+    if ((isOdd(row) && isOdd(column)) || (isEven(row) && isEven(column))) {
       return 'tile--color1';
     } else {
       return 'tile--color2';
@@ -137,6 +136,9 @@
     setRootProperty('--font-size', `${fontSize}vmin`);
   };
 
+  // Event handler for tiles
+  // Swaps grid-area valies for clicked tile and empty area
+  // Enables/disables button based on lookup in areaKeys
   // @TODO Use event delegation: .grid and event.target
   const attachTilesClickHandler = (tiles, emptyTile, areaKeys) => {
     tiles.map((tile) => {
@@ -160,32 +162,28 @@
     });
   };
 
+  // Fn iterates thorugh tiles and checks which should be disabled and enabled based on areaKeys map
   const unlockTiles = (tiles, currentTileArea, areaKeys, gridSize) => {
-    // Cycle through all the tiles and check which should be disabled and enabled
-
     tiles.map((tile) => {
       const tileArea = tile.style.getPropertyValue('--area');
-
-      // Check if that areaKey has the tiles area in it's values
-      // .trim() is needed because the animation lib formats the styles attribute
-
       const areaKey = getAreaKey(tileArea, gridSize);
-
       if (areaKeys[currentTileArea].includes(areaKey)) {
         tile.disabled = false;
       } else {
         tile.disabled = true;
       }
     });
-
-    // Check if the tiles are in the right order
     isComplete(tiles, areaKeys);
   };
 
+  // Do we have a winner?
   const isComplete = (tiles, areaKeys) => {
     // Get all the current tile area values
     const currentTilesString = tiles
-      .map((tile) => tile.style.getPropertyValue('--area').trim())
+      .map((tile) => {
+        const areaRowColumn = tile.style.getPropertyValue('--area').trim();
+        return getAreaKey(areaRowColumn, gridSize);
+      })
       .toString();
 
     // Compare the current tiles with the areaKeys keys
@@ -196,7 +194,7 @@
   };
 
   // Inversion calculator
-  const inversionCount = (array) => {
+  const getInversionCount = (array) => {
     // Using the reduce function to run through all items in the array
     // Each item in the array is checked against everything before it
     // This will return a new array with each intance of an item appearing before it's original predecessor
@@ -214,15 +212,41 @@
   };
 
   // Randomise tiles
-  const shuffledKeys = (keys) => {
+  const getShuffledKeys = (keys) => {
     return Object.keys(keys)
       .map(Number)
       .sort(() => 0.5 - Math.random());
   };
 
+  const checkIsShuffleSolvable = (shuffledAreas, emptyAreaRow) => {
+    // @DEBUG START
+    const inversionCount = getInversionCount(shuffledAreas);
+    console.log({
+      gridSize,
+      inversionCount,
+      emptyAreaRow,
+    });
+    // @DEBUG END
+
+    // See formula in solvability-tiles-game.pdf
+    // I just count from the top instead of from the bottom
+    // because I am weird like that I guess
+
+    return (
+      (isOdd(gridSize) && isEven(getInversionCount(shuffledAreas))) ||
+      (isEven(gridSize) &&
+        isEven(emptyAreaRow) &&
+        isEven(getInversionCount(shuffledAreas))) ||
+      (isEven(gridSize) &&
+        isOdd(emptyAreaRow) &&
+        isOdd(getInversionCount(shuffledAreas)))
+    );
+  };
+
   // Main
   function main() {
-    const numberOfTiles = Math.pow(gridSize, 2) - 1; //?
+    //const numberOfTiles = Math.pow(gridSize, 2) - 1; //?
+    const numberOfTiles = gridSize ** 2 - 1;
 
     //@TODO — just reset game instead of reloading
     newGame.addEventListener('click', (event) => location.reload());
@@ -242,31 +266,37 @@
 
     setTimeout(() => {
       // Begin with our in order area keys
-      let startingAreas = Object.keys(areaKeys).map(Number);
+      //@TODO wait this isn't needed is it?
+      let shuffledKeys = Object.keys(areaKeys).map(Number);
 
       // Use the inversion function to check if the keys will be solveable or not shuffled
       // Shuffle the keys until they are solvable
-      while (
-        inversionCount(startingAreas) % 2 == 1 ||
-        inversionCount(startingAreas) == 0
-      ) {
-        startingAreas = shuffledKeys(areaKeys); //?
+      let isValidShuffle = false;
+
+      while (!isValidShuffle) {
+        shuffledKeys = getShuffledKeys(areaKeys);
+
+        let emptyTileRow = getAreaRow(
+          shuffledKeys.indexOf(numberOfTiles + 1),
+          gridSize
+        );
+        isValidShuffle = checkIsShuffleSolvable(shuffledKeys, emptyTileRow);
       }
 
       // Apply shuffled areas
       tiles.map((tile, index) => {
-        let areaRow = getAreaRow(startingAreas[index], gridSize);
-        let areaColumn = getAreaColumn(startingAreas[index], areaRow, gridSize);
+        let areaRow = getAreaRow(shuffledKeys[index], gridSize);
+        let areaColumn = getAreaColumn(shuffledKeys[index], areaRow, gridSize);
         tile.style.setProperty('--area', `${areaRow}/${areaColumn}`);
       });
 
       // Initial shuffle animation
       forceGridAnimation();
 
-      // Unlock and lock tiles
       const emptyTileArea = emptyTile.style.getPropertyValue('--area');
       const emptyTileAreaKey = getAreaKey(emptyTileArea, gridSize);
 
+      // Unlock and lock tiles
       unlockTiles(tiles, emptyTileAreaKey, areaKeys, gridSize);
     }, 500);
   }
