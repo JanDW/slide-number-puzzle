@@ -46,6 +46,10 @@
     return !isEven(number);
   };
 
+  const isNotZero = (number) => {
+    return number !== 0;
+  };
+
   // Find out what row a tile is in
   const getAreaRow = (tilePosition, gridSize) => {
     return Math.ceil(tilePosition++ / gridSize);
@@ -233,13 +237,14 @@
     // because I am weird like that I guess
 
     return (
-      (isOdd(gridSize) && isEven(getInversionCount(shuffledAreas))) ||
+      (isOdd(gridSize) &&
+        isEven(inversionCount) &&
+        isNotZero(inversionCount)) ||
       (isEven(gridSize) &&
         isEven(emptyAreaRow) &&
-        isEven(getInversionCount(shuffledAreas))) ||
-      (isEven(gridSize) &&
-        isOdd(emptyAreaRow) &&
-        isOdd(getInversionCount(shuffledAreas)))
+        isEven(inversionCount) &&
+        isNotZero(inversionCount)) ||
+      (isEven(gridSize) && isOdd(emptyAreaRow) && isOdd(inversionCount))
     );
   };
 
