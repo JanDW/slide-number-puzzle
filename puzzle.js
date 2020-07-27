@@ -290,8 +290,9 @@
 
       // Apply shuffled areas
       tiles.map((tile, index) => {
-        let areaRow = getAreaRow(shuffledKeys[index], gridSize);
-        let areaColumn = getAreaColumn(shuffledKeys[index], areaRow, gridSize);
+        let i = index + 1
+        let areaRow = getAreaRow(shuffledKeys.indexOf(i) + 1, gridSize);
+        let areaColumn = getAreaColumn(shuffledKeys.indexOf(i) + 1, areaRow, gridSize);
         tile.style.setProperty('--area', `${areaRow}/${areaColumn}`);
       });
 
