@@ -199,9 +199,6 @@
 
   // Inversion calculator
   const getInversionCount = (array) => {
-    // Using the reduce function to run through all items in the array
-    // Each item in the array is checked against everything before it
-    // This will return a new array with each intance of an item appearing before it's original predecessor
     return array.reduce((accumulator, current, index, array) => {
       return array
         .slice(index)
@@ -223,18 +220,36 @@
   };
 
   const checkIsShuffleSolvable = (shuffledAreas, emptyAreaRow) => {
-    // @DEBUG START
     const inversionCount = getInversionCount(shuffledAreas);
+    // @DEBUG START
+    console.log(`-----START-----`);
     console.log({
       gridSize,
       inversionCount,
       emptyAreaRow,
+      shuffledAreas,
     });
     // @DEBUG END
 
+    console.log(`--- John's formula ---`);
+    console.log(
+      isEven(inversionCount + (1 - (emptyAreaRow % 2)) * emptyAreaRow)
+    );
+
     // See formula in solvability-tiles-game.pdf
-    // I just count from the top instead of from the bottom
-    // because I am weird like that I guess
+    console.log(`--- Jan's check ---`);
+    console.log(
+      (isOdd(gridSize) &&
+        isEven(inversionCount) &&
+        isNotZero(inversionCount)) ||
+        (isEven(gridSize) &&
+          isEven(emptyAreaRow) &&
+          isEven(inversionCount) &&
+          isNotZero(inversionCount)) ||
+        (isEven(gridSize) && isOdd(emptyAreaRow) && isOdd(inversionCount))
+    );
+
+    console.log(`-----END-----`);
 
     return (
       (isOdd(gridSize) &&
@@ -290,9 +305,13 @@
 
       // Apply shuffled areas
       tiles.map((tile, index) => {
-        let i = index + 1
+        let i = index + 1;
         let areaRow = getAreaRow(shuffledKeys.indexOf(i) + 1, gridSize);
-        let areaColumn = getAreaColumn(shuffledKeys.indexOf(i) + 1, areaRow, gridSize);
+        let areaColumn = getAreaColumn(
+          shuffledKeys.indexOf(i) + 1,
+          areaRow,
+          gridSize
+        );
         tile.style.setProperty('--area', `${areaRow}/${areaColumn}`);
       });
 
