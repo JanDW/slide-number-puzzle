@@ -194,6 +194,9 @@
     if (currentTilesString == Object.keys(areaKeys).toString()) {
       heading.innerHTML = 'Nicely Done!';
       heading.style = `display:block; animation: popIn .3s cubic-bezier(0.68, -0.55, 0.265, 1.55);`;
+      setTimeout(() => {
+        heading.style = `display:none;`;
+      }, 2500);
     }
   };
 
