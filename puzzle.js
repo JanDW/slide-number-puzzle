@@ -269,7 +269,7 @@
     const numberOfTiles = gridSize ** 2 - 1;
 
     //@TODO — just reset game instead of reloading
-    newGame.addEventListener('click', (event) => location.reload());
+    newGame.addEventListener('click', (event) => main());
     setRootProperty('--grid-size', gridSize);
 
     generateGridInDOM(grid, numberOfTiles, gridSize);
