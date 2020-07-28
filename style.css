@@ -37,6 +37,9 @@ body {
   font-family: LibreClarendonWide-Medium, american typewriter, serif;
   font-size: var(--font-size);
   touch-action: none; /* disable zoom on touch devices */
+  display: grid;
+  place-items: center; /* vert/horiz center .container */
+  height: 100%;
 }
 
 .grid-size {
