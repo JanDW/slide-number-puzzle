@@ -27,12 +27,7 @@ html {
 }
 
 body {
-  background: hsl(220, 20%, 91%);
-  background: linear-gradient(
-    45deg,
-    hsl(220, 20%, 91%) 0%,
-    hsl(220, 20%, 61%) 100%
-  );
+  background-color: hsl(220, 10%, 70%);
   color: hsl(0, 0%, 1%);
   font-family: LibreClarendonWide-Medium, american typewriter, serif;
   font-size: var(--font-size);
@@ -46,6 +41,11 @@ body {
   display:flex;
   justify-content: center;
   margin: 2vmin 0;
+}
+
+.grid-size > input {
+  width: 10rem;
+  height: 1rem; 
 }
 
 main {
