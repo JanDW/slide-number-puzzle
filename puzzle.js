@@ -202,14 +202,14 @@
 
   // Inversion calculator
   const getInversionCount = (array) => {
-    return array.reduce((accumulator, current, index, array) => {
+    return array.reduce((accumulator, valueAtIndex, index, array) => {
       return array
         .slice(index)
-        .filter((item) => {
-          return item < current;
+        .filter((element) => {
+          return element < valueAtIndex;
         })
-        .map((item) => {
-          return [current, item];
+        .map((element) => {
+          return [valueAtIndex, element];
         })
         .concat(accumulator);
     }, []).length;
