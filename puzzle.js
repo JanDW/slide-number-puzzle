@@ -195,42 +195,17 @@
     }
   };
 
-  // Inversion calculator
   const getInversionCount = (array) => {
-    return array.reduce((accumulator, valueAtIndex, index, array) => {
-      return array
-        .slice(index) //?
-        .filter((element) => {
-          return element < valueAtIndex; //?
-        })
-        .map((element) => {
-          return [valueAtIndex, element]; //?
-        })
-        .concat(accumulator); //?
-    }, []).length;
-  };
-
-  //@TODO @WIP
-  const getNewInversionCount = (array) => {
-    let inversionSum = 0;
+    let inversionCount = 0;
     for (let i = 0; i < array.length; i++) {
       let currentInversionCount = 0;
       for (let j = 0; j < i; j++) {
         if (array[j] > array[i]) currentInversionCount++;
       }
-      inversionSum += currentInversionCount;
+      inversionCount += currentInversionCount;
     }
-    return inversionSum;
+    return inversionCount;
   };
-
-  const testArray = [7, 8, 11, 1, 2, 12, 10, 3, 9, 5, 16, 15, 4, 6, 14, 13];
-  const testArray2 = [1, 6, 2, 8, 3, 4, 5, 9, 7, 14, 11, 12, 13, 10, 15, 16];
-
-  // const newInversionCount = getNewInversionCount(
-  //    testArray2
-  //  );
-
-  //  const newInversionCount2 = getInversionCount(testArray2);
 
   // Randomise tiles
   const getShuffledKeys = (keys) => {
@@ -240,7 +215,7 @@
   };
 
   const checkIsShuffleSolvable = (shuffledAreas, emptyAreaRow) => {
-    const inversionCount = getNewInversionCount(shuffledAreas);
+    const inversionCount = getInversionCount(shuffledAreas);
     // @DEBUG START
     console.log(`-----START-----`);
     console.log({
