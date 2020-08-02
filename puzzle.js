@@ -98,13 +98,8 @@
   };
 
   // Fn returns CSS class to set background color for tile
-  const getTileColor = (row, column) => {
-    if (isEven(row + column)) {
-        return 'tile--color1';
-      } else {
-        return 'tile--color2';
-      }
-  };
+  const getTileColor = (row, column) =>
+    isEven(row + column) ? 'tile--color1' : 'tile--color2';
 
   // Remove existing puzzle, Generate new puzzle, insert in DOM
   const generateGridInDOM = (grid, numberOfTiles, gridSize) => {
@@ -245,9 +240,9 @@
       (isOdd(gridSize) &&
         isEven(inversionCount) &&
         isNotZero(inversionCount)) ||
-      (isEven(gridSize) &&
-        isEven(emptyAreaRow + inversionCount) &&
-        isNotZero(inversionCount))
+        (isEven(gridSize) &&
+          isEven(emptyAreaRow + inversionCount) &&
+          isNotZero(inversionCount))
     );
 
     console.log(`-----END-----`);
