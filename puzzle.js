@@ -62,7 +62,7 @@
 
   // Fn to generate map of valid moves for each empty tile position
   const getAreaKeys = (gridSize) => {
-    const gridPositions = Math.pow(gridSize, 2);
+    const gridPositions = gridSize ** 2;
     const areaKeys = [];
     for (let index = 1; index < gridPositions + 1; index++) {
       const areaRow = getAreaRow(index, gridSize);
@@ -99,11 +99,11 @@
 
   // Fn returns CSS class to set background color for tile
   const getTileColor = (row, column) => {
-    if ((isOdd(row) && isOdd(column)) || (isEven(row) && isEven(column))) {
-      return 'tile--color1';
-    } else {
-      return 'tile--color2';
-    }
+    if (isEven(row + column)) {
+        return 'tile--color1';
+      } else {
+        return 'tile--color2';
+      }
   };
 
   // Remove existing puzzle, Generate new puzzle, insert in DOM
@@ -264,10 +264,8 @@
 
   // Main
   function main() {
-    //const numberOfTiles = Math.pow(gridSize, 2) - 1; //?
     const numberOfTiles = gridSize ** 2 - 1;
 
-    //@TODO — just reset game instead of reloading
     newGame.addEventListener('click', (event) => main());
     setRootProperty('--grid-size', gridSize);
 
@@ -276,7 +274,6 @@
     const tiles = Array.from(document.querySelectorAll('.tile'));
     const emptyTile = document.querySelector('.tile--empty');
 
-    //@TODO size in relative units or recalculate, so it updates on viewport resize
     sizeTileFont(gridSize);
 
     const areaKeys = getAreaKeys(gridSize);
