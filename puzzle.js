@@ -245,11 +245,9 @@
       (isOdd(gridSize) &&
         isEven(inversionCount) &&
         isNotZero(inversionCount)) ||
-        (isEven(gridSize) &&
-          isEven(emptyAreaRow) &&
-          isEven(inversionCount) &&
-          isNotZero(inversionCount)) ||
-        (isEven(gridSize) && isOdd(emptyAreaRow) && isOdd(inversionCount))
+      (isEven(gridSize) &&
+        isEven(emptyAreaRow + inversionCount) &&
+        isNotZero(inversionCount))
     );
 
     console.log(`-----END-----`);
@@ -259,10 +257,8 @@
         isEven(inversionCount) &&
         isNotZero(inversionCount)) ||
       (isEven(gridSize) &&
-        isEven(emptyAreaRow) &&
-        isEven(inversionCount) &&
-        isNotZero(inversionCount)) ||
-      (isEven(gridSize) && isOdd(emptyAreaRow) && isOdd(inversionCount))
+        isEven(emptyAreaRow + inversionCount) &&
+        isNotZero(inversionCount))
     );
   };
 
