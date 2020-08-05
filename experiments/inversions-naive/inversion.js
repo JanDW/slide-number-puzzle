@@ -44,3 +44,9 @@ console.log(
 );
 
 console.log(getInversionCount([7, 2, 1, 4, 6, 3, 5]));
+
+
+//unsolvable what gives
+console.log(
+  getInversionCount([1, 14, 8, 12, 10, 9, 5, 6, 7, 15, 2, 13, 4, 11, 16, 3])
+);
