@@ -195,17 +195,29 @@
     }
   };
 
-  const getInversionCount = (array) => {
-    let inversionCount = 0;
-    for (let i = 0; i < array.length; i++) {
-      let currentInversionCount = 0;
-      for (let j = 0; j < i; j++) {
-        if (array[j] > array[i]) currentInversionCount++;
-      }
-      inversionCount += currentInversionCount;
+  // Iterate over array
+  // for current iteration check all elements in the array before the current indexx
+  //check if the value is smaller than the value for the index, then count them.
+  // subtract the count from the index, add the result to inversionCount
+
+const getInversionCount = (array) => {
+  let inversionCount = 0;
+  for (let i = 0; i < array.length; i++) {
+    let placesNotInvertedCount = 0;
+    for (let j = 0; j < i; j++) {
+      // let arrayj = array[j];
+      // let arrayi = array[i];
+
+      // console.log({ i, j, arrayi, arrayj });
+      // if (arrayj < arrayi) placesNotInvertedCount++;
+      if (array[j] < array[i]) placesNotInvertedCount++;
     }
-    return inversionCount;
-  };
+    inversionCount += array[i] - 1 - placesNotInvertedCount;
+    // console.log(inversionCount);
+  }
+  return inversionCount;
+};
+
 
   // Randomise tiles
   const getShuffledKeys = (keys) => {
