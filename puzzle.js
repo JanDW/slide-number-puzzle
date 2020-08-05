@@ -4,39 +4,14 @@
 //@TODO change vocab to positions, tiles, empty tile.
 
 (function () {
-  // Range HTML input element to set gridSize
-  const gridSizeRange = document.querySelector('#gridSize');
-
-  // Only variable that needs to get set, everything else gets derived
   let gridSize = 4;
 
-  // Fn for event listeners callback on the range HTML input
-  const getGridSize = () => {
-    gridSize = parseInt(gridSizeRange.value);
-    main();
-  };
-
-  // Event listeners for range HTML input to change gridSize
-  gridSizeRange.addEventListener('mouseup', getGridSize, false);
-  gridSizeRange.addEventListener('touchend', getGridSize, false);
-
-  // Container for puzzle
+  const gridSizeInput = document.querySelector('#gridSize');
   const grid = document.querySelector('.grid');
-
-  // Message container for announcing that puzzle has been solved
   const heading = document.querySelector('.heading');
 
-  // Affordance to start new game
-  const newGame = document.querySelector('.newGame');
-
   // Init animateCSSGrid dependency
-  //const { forceGridAnimation } = animateCSSGrid.wrapGrid(grid);
-
-  // Define a CSS custom property on the :root element
-  const setRootProperty = (property, value) => {
-    const root = document.documentElement;
-    root.style.setProperty(property, value);
-  };
+  const { forceGridAnimation } = animateCSSGrid.wrapGrid(grid);
 
   const isEven = (number) => {
     return number % 2 === 0;
@@ -48,6 +23,17 @@
 
   const isNotZero = (number) => {
     return number !== 0;
+  };
+
+  // Define a CSS custom property on the :root element
+  const setRootProperty = (property, value) => {
+    const root = document.documentElement;
+    root.style.setProperty(property, value);
+  };
+
+  const getGridSize = () => {
+    gridSize = parseInt(gridSizeInput.value);
+    main();
   };
 
   // Find out what row a tile is in
@@ -114,7 +100,7 @@
       let areaColumn = getAreaColumn(index, areaRow, gridSize);
       let tileColor = getTileColor(areaRow, areaColumn);
       gridHTML += `<button class="tile tile--${index} ${tileColor}" disabled style="--area: ${areaRow}/${areaColumn};">${index}</button>
-    <div class="tile-background" style="--area: ${areaRow}/${areaColumn};"></div>`;
+      <div class="tile-background" style="--area: ${areaRow}/${areaColumn};"></div>`;
     }
     // Finally, add empty tile HTML
     gridHTML += `<div class="tile tile--empty" style="--area: ${gridSize}/${gridSize};"></div>
@@ -151,7 +137,7 @@
         tile.style.setProperty('--area', emptyTileArea);
 
         // Animate the tiles
-        // forceGridAnimation();
+        forceGridAnimation();
 
         const currentTileArea = getAreaKey(tileArea, gridSize);
 
@@ -200,24 +186,17 @@
   //check if the value is smaller than the value for the index, then count them.
   // subtract the count from the index, add the result to inversionCount
 
-const getInversionCount = (array) => {
-  let inversionCount = 0;
-  for (let i = 0; i < array.length; i++) {
-    let placesNotInvertedCount = 0;
-    for (let j = 0; j < i; j++) {
-      // let arrayj = array[j];
-      // let arrayi = array[i];
-
-      // console.log({ i, j, arrayi, arrayj });
-      // if (arrayj < arrayi) placesNotInvertedCount++;
-      if (array[j] < array[i]) placesNotInvertedCount++;
+  const getInversionCount = (array) => {
+    let inversionCount = 0;
+    for (let i = 0; i < array.length; i++) {
+      let placesNotInvertedCount = 0;
+      for (let j = 0; j < i; j++) {
+        if (array[j] < array[i]) placesNotInvertedCount++;
+      }
+      inversionCount += array[i] - 1 - placesNotInvertedCount;
     }
-    inversionCount += array[i] - 1 - placesNotInvertedCount;
-    // console.log(inversionCount);
-  }
-  return inversionCount;
-};
-
+    return inversionCount;
+  };
 
   // Randomise tiles
   const getShuffledKeys = (keys) => {
@@ -266,11 +245,15 @@ const getInversionCount = (array) => {
     );
   };
 
+  gridSizeInput.addEventListener('mouseup', getGridSize, false);
+  gridSizeInput.addEventListener('touchend', getGridSize, false);
+
   // Main
   function main() {
     const numberOfTiles = gridSize ** 2 - 1;
 
-    newGame.addEventListener('click', (event) => main());
+    const newGameButton = document.querySelector('.newGame');
+    newGameButton.addEventListener('click', (event) => main());
     setRootProperty('--grid-size', gridSize);
 
     generateGridInDOM(grid, numberOfTiles, gridSize);
@@ -316,7 +299,7 @@ const getInversionCount = (array) => {
       });
 
       // Initial shuffle animation
-      // forceGridAnimation();
+      forceGridAnimation();
 
       const emptyTileArea = emptyTile.style.getPropertyValue('--area');
       const emptyTileAreaKey = getAreaKey(emptyTileArea, gridSize);
