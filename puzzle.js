@@ -152,11 +152,7 @@
     tiles.map((tile) => {
       const tileArea = tile.style.getPropertyValue('--area');
       const areaKey = getAreaKey(tileArea, gridSize);
-      if (areaKeys[currentTileArea].includes(areaKey)) {
-        tile.disabled = false;
-      } else {
-        tile.disabled = true;
-      }
+      tile.disabled = !areaKeys[currentTileArea].includes(areaKey);
     });
     isComplete(tiles, areaKeys);
   };
