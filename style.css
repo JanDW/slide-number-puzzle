@@ -56,6 +56,10 @@ main {
   height: 80vmin;
 }
 
+button {
+  color: #000;
+}
+
 .heading {
   font-size: 5vmin;
   text-align: center;
