@@ -35,6 +35,8 @@ body {
   display: grid;
   place-items: center; /* vert/horiz center .container */
   height: 100%;
+  user-select: none; /* disable text selection */
+  -webkit-user-select: none; /* disable text selection */
 }
 
 .grid-size {
