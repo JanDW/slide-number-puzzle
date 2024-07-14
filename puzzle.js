@@ -232,12 +232,10 @@
     console.log(`-----END-----`);
 
     return (
-      (isOdd(gridSize) &&
-        isEven(inversionCount) &&
-        isNotZero(inversionCount)) ||
+      (isOdd(gridSize) && isEven(inversionCount)) ||
       (isEven(gridSize) &&
-        isEven(emptyAreaRow + inversionCount) &&
-        isNotZero(inversionCount))
+        ((isEven(emptyAreaRowFromBottom) && isOdd(inversionCount)) ||
+          (isOdd(emptyAreaRowFromBottom) && isEven(inversionCount))))
     );
   };
 
